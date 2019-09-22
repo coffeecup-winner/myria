@@ -55,7 +55,5 @@ $(ISO_KERNEL): $(KERNEL)
 	mkdir -p $(ISO_BOOT_DIR)
 	ln -f $(KERNEL) $(ISO_KERNEL)
 
-$(ISO_DIR): $(ISO_KERNEL) $(ISO_GRUB_CFG)
-
-$(ISO_IMAGE): $(ISO_DIR)
+$(ISO_IMAGE): $(ISO_KERNEL) $(ISO_GRUB_CFG)
 	grub-mkrescue -d /usr/lib/grub/i386-pc -o $(ISO_IMAGE) $(ISO_DIR)
