@@ -1,2 +1,2 @@
-# Make output folder
-build
+/target
+**/*.rs.bk

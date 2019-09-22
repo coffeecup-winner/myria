@@ -10,9 +10,10 @@ boot_start:
 boot_end:
 
 global entry
+extern _entry
 section .text
 bits 32
 entry:
     cli
-    mov dword [0xb8000], 0x07690748
+    jmp _entry
     hlt
