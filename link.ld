@@ -4,5 +4,7 @@ SECTIONS
 {
     . = 1M;
     .boot : { *(.boot) }
-    .text : { *(.text) }
+    .text : { *(.text) *(.rodata) }
+    .data : { *(.data) }
+    .bss  : { *(.bss) }
 }
