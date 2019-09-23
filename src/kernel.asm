@@ -10,10 +10,26 @@ boot_start:
 boot_end:
 
 global entry
+global _load_gdt
+
 extern _entry
+
 section .text
 bits 32
 entry:
     cli
     jmp _entry
     hlt
+
+_load_gdt: ; _load_gdt(u32)
+    mov eax, [esp + 4]
+    lgdt [eax]
+    jmp 0x08:flush ; flushes cs
+flush:
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    ret

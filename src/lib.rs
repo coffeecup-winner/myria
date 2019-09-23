@@ -4,6 +4,7 @@
 
 use core::panic::PanicInfo;
 
+mod gdt;
 mod vga;
 
 use vga::*;
@@ -21,11 +22,17 @@ fn panic(info: &PanicInfo) -> ! {
 
 #[no_mangle]
 pub extern "C" fn _entry() -> ! {
-    let vga = VGA::new(80, 25);
+    let mut vga = VGA::new(80, 25);
     for y in 0..vga.height() {
         for x in 0..vga.width() {
-            vga.putc(x, y, '*');
+            vga.putc(x, y, ' ');
         }
     }
+    // TODO: make panics reuse the cursor
+    vga.set_cursor(0, 1);
+    core::fmt::write(&mut vga, format_args!("Booting Myria"));
+    gdt::load_gdt();
+    vga.set_cursor(0, 2);
+    core::fmt::write(&mut vga, format_args!("Loaded GDT"));
     panic!("Halt");
 }
