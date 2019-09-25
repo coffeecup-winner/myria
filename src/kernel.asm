@@ -11,6 +11,7 @@ boot_end:
 
 global entry
 global _load_gdt
+global _load_idt
 
 extern _entry
 
@@ -32,4 +33,9 @@ flush:
     mov fs, ax
     mov gs, ax
     mov ss, ax
+    ret
+
+_load_idt: ; _load_idt(u32)
+    mov eax, [esp + 4]
+    lidt [eax]
     ret

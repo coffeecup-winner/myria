@@ -6,6 +6,7 @@
 use core::panic::PanicInfo;
 
 mod gdt;
+mod idt;
 mod vga;
 
 #[panic_handler]
@@ -24,5 +25,7 @@ pub extern "C" fn _entry() -> ! {
     println!("Booting Myria");
     gdt::load_gdt();
     println!("Loaded GDT");
+    idt::load_idt();
+    println!("Loaded IDT");
     panic!("Halt");
 }
