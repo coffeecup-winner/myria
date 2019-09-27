@@ -3,11 +3,18 @@
 
 #![no_std]
 
+#[macro_use]
+extern crate lazy_static;
+
 use core::panic::PanicInfo;
+
+#[macro_use]
+mod vga;
 
 mod gdt;
 mod idt;
-mod vga;
+mod io;
+mod pic;
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
@@ -25,6 +32,8 @@ pub extern "C" fn _entry() -> ! {
     println!("Booting Myria");
     gdt::load_gdt();
     println!("Loaded GDT");
+    pic::remap(0x20, 0x28);
+    println!("Remapped PIC");
     idt::load_idt();
     println!("Loaded IDT");
     panic!("Halt");
