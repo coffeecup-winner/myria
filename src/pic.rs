@@ -1,4 +1,4 @@
-use crate::io;
+use x86::io;
 
 pub const PIC0_CMD: u16 = 0x20;
 pub const PIC0_DATA: u16 = 0x21;
@@ -23,34 +23,36 @@ const PIC_CMD_ICW4_SFNM: u8 = 0x10; // special fully nested
 
 pub fn remap(offset0: u8, offset1: u8) {
     unsafe {
-        let pic0mask = io::_inb(PIC0_DATA);
-        let pic1mask = io::_inb(PIC1_DATA);
+        let pic0mask = io::inb(PIC0_DATA);
+        let pic1mask = io::inb(PIC1_DATA);
+
+        let iowait = || { io::outb(0x80, 0); };
 
         // ICW1
-        io::_outb(PIC0_CMD, PIC_CMD_ICW1_INIT | PIC_CMD_ICW1_ICW4);
-        io::_iowait();
-        io::_outb(PIC1_CMD, PIC_CMD_ICW1_INIT | PIC_CMD_ICW1_ICW4);
-        io::_iowait();
+        io::outb(PIC0_CMD, PIC_CMD_ICW1_INIT | PIC_CMD_ICW1_ICW4);
+        iowait();
+        io::outb(PIC1_CMD, PIC_CMD_ICW1_INIT | PIC_CMD_ICW1_ICW4);
+        iowait();
 
         // ICW2
-        io::_outb(PIC0_DATA, offset0);
-        io::_iowait();
-        io::_outb(PIC1_DATA, offset1);
-        io::_iowait();
+        io::outb(PIC0_DATA, offset0);
+        iowait();
+        io::outb(PIC1_DATA, offset1);
+        iowait();
 
         // ICW3
-        io::_outb(PIC0_DATA, 1 << 2); // slave PIC at IRQ 2 in master
-        io::_iowait();
-        io::_outb(PIC1_DATA, 1 << 1); // slave PIC's cascade identity
-        io::_iowait();
+        io::outb(PIC0_DATA, 1 << 2); // slave PIC at IRQ 2 in master
+        iowait();
+        io::outb(PIC1_DATA, 1 << 1); // slave PIC's cascade identity
+        iowait();
 
         // ICW4
-        io::_outb(PIC0_DATA, PIC_CMD_ICW4_8086);
-        io::_iowait();
-        io::_outb(PIC1_DATA, PIC_CMD_ICW4_8086);
-        io::_iowait();
+        io::outb(PIC0_DATA, PIC_CMD_ICW4_8086);
+        iowait();
+        io::outb(PIC1_DATA, PIC_CMD_ICW4_8086);
+        iowait();
 
-        io::_outb(PIC0_DATA, pic0mask);
-        io::_outb(PIC1_DATA, pic1mask);
+        io::outb(PIC0_DATA, pic0mask);
+        io::outb(PIC1_DATA, pic1mask);
     }
 }

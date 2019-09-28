@@ -12,9 +12,6 @@ boot_end:
 global entry
 global _load_gdt
 global _load_idt
-global _outb
-global _inb
-global _iowait
 global _exc0
 global _exc1
 global _exc2
@@ -65,39 +62,7 @@ global _irq14
 global _irq15
 
 extern _entry
-extern error_code
-extern exc0_handler
-extern exc1_handler
-extern exc2_handler
-extern exc3_handler
-extern exc4_handler
-extern exc5_handler
-extern exc6_handler
-extern exc7_handler
-extern exc8_handler
-extern exc9_handler
-extern exc10_handler
-extern exc11_handler
-extern exc12_handler
-extern exc13_handler
-extern exc14_handler
-extern exc15_handler
-extern exc16_handler
-extern exc17_handler
-extern exc18_handler
-extern exc19_handler
-extern exc20_handler
-extern exc21_handler
-extern exc22_handler
-extern exc23_handler
-extern exc24_handler
-extern exc25_handler
-extern exc26_handler
-extern exc27_handler
-extern exc28_handler
-extern exc29_handler
-extern exc30_handler
-extern exc31_handler
+extern exception_handler
 extern irq0_handler
 extern irq1_handler
 extern irq2_handler
@@ -141,252 +106,180 @@ _load_idt: ; _load_idt(u32)
     sti
     ret
 
-_outb: ; _outb(u16, u8)
-    mov dx, [esp + 4]
-    mov al, [esp + 6]
-    out dx, al
-    ret
-
-_inb: ; _inb(u16) -> u8
-    mov dx, [esp + 4]
-    in al, dx
-    ret
-
-_iowait: ; _iowait()
-    xor eax, eax
-    out 0x80, al ; waste a cycle on an unused port
-    ret
-
 _exc0: ; _exc0()
-    pusha
-    call exc0_handler
-    popa
-    iret
+    push dword 0
+    push dword 0
+    jmp _exc_common
 
 _exc1: ; _exc1()
-    pusha
-    call exc1_handler
-    popa
-    iret
+    push dword 0
+    push dword 1
+    jmp _exc_common
 
 _exc2: ; _exc2()
-    pusha
-    call exc2_handler
-    popa
-    iret
+    push dword 0
+    push dword 2
+    jmp _exc_common
 
 _exc3: ; _exc3()
-    pusha
-    call exc3_handler
-    popa
-    iret
+    push dword 0
+    push dword 3
+    jmp _exc_common
 
 _exc4: ; _exc4()
-    pusha
-    call exc4_handler
-    popa
-    iret
+    push dword 0
+    push dword 4
+    jmp _exc_common
 
 _exc5: ; _exc5()
-    pusha
-    call exc5_handler
-    popa
-    iret
+    push dword 0
+    push dword 5
+    jmp _exc_common
 
 _exc6: ; _exc6()
-    pusha
-    call exc6_handler
-    popa
-    iret
+    push dword 0
+    push dword 6
+    jmp _exc_common
 
 _exc7: ; _exc7()
-    pusha
-    call exc7_handler
-    popa
-    iret
+    push dword 0
+    push dword 7
+    jmp _exc_common
 
 _exc8: ; _exc8()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc8_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 8
+    jmp _exc_common
 
 _exc9: ; _exc9()
-    pusha
-    call exc9_handler
-    popa
-    iret
+    push dword 0
+    push dword 9
+    jmp _exc_common
 
 _exc10: ; _exc10()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc10_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 10
+    jmp _exc_common
 
 _exc11: ; _exc11()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc11_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 11
+    jmp _exc_common
 
 _exc12: ; _exc12()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc12_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 12
+    jmp _exc_common
 
 _exc13: ; _exc13()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc13_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 13
+    jmp _exc_common
 
 _exc14: ; _exc14()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc14_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 14
+    jmp _exc_common
 
 _exc15: ; _exc15()
-    pusha
-    call exc15_handler
-    popa
-    iret
+    push dword 0
+    push dword 15
+    jmp _exc_common
 
 _exc16: ; _exc16()
-    pusha
-    call exc16_handler
-    popa
-    iret
+    push dword 0
+    push dword 16
+    jmp _exc_common
 
 _exc17: ; _exc17()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc17_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 17
+    jmp _exc_common
 
 _exc18: ; _exc18()
-    pusha
-    call exc18_handler
-    popa
-    iret
+    push dword 0
+    push dword 18
+    jmp _exc_common
 
 _exc19: ; _exc19()
-    pusha
-    call exc19_handler
-    popa
-    iret
+    push dword 0
+    push dword 19
+    jmp _exc_common
 
 _exc20: ; _exc20()
-    pusha
-    call exc20_handler
-    popa
-    iret
+    push dword 0
+    push dword 20
+    jmp _exc_common
 
 _exc21: ; _exc21()
-    pusha
-    call exc21_handler
-    popa
-    iret
+    push dword 0
+    push dword 21
+    jmp _exc_common
 
 _exc22: ; _exc22()
-    pusha
-    call exc22_handler
-    popa
-    iret
+    push dword 0
+    push dword 22
+    jmp _exc_common
 
 _exc23: ; _exc23()
-    pusha
-    call exc23_handler
-    popa
-    iret
+    push dword 0
+    push dword 23
+    jmp _exc_common
 
 _exc24: ; _exc24()
-    pusha
-    call exc24_handler
-    popa
-    iret
+    push dword 0
+    push dword 24
+    jmp _exc_common
 
 _exc25: ; _exc25()
-    pusha
-    call exc25_handler
-    popa
-    iret
+    push dword 0
+    push dword 25
+    jmp _exc_common
 
 _exc26: ; _exc26()
-    pusha
-    call exc26_handler
-    popa
-    iret
+    push dword 0
+    push dword 26
+    jmp _exc_common
 
 _exc27: ; _exc27()
-    pusha
-    call exc27_handler
-    popa
-    iret
+    push dword 0
+    push dword 27
+    jmp _exc_common
 
 _exc28: ; _exc28()
-    pusha
-    call exc28_handler
-    popa
-    iret
+    push dword 0
+    push dword 28
+    jmp _exc_common
 
 _exc29: ; _exc29()
-    pusha
-    call exc29_handler
-    popa
-    iret
+    push dword 0
+    push dword 29
+    jmp _exc_common
 
 _exc30: ; _exc30()
-    push eax
-    mov eax, [esp + 4] ; error code
-    pusha
-    push eax
-    call exc30_handler
-    popa
-    pop eax
-    add esp, 4 ; remove error code
-    iret
+    push dword 30
+    jmp _exc_common
 
 _exc31: ; _exc31()
-    pusha
-    call exc31_handler
-    popa
+    push dword 0
+    push dword 31
+    jmp _exc_common
+
+_exc_common:
+    pushad
+    push ds
+    push es
+    push fs
+    push gs
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov eax, esp
+    push eax
+    mov eax, exception_handler
+    call eax
+    pop eax
+    pop gs
+    pop fs
+    pop es
+    pop ds
+    popad
+    add esp, 8
     iret
 
 _irq0: ; _irq0()

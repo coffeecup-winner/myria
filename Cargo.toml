@@ -9,6 +9,9 @@ edition = "2018"
 [lib]
 crate-type = ["staticlib"]
 
+[dependencies]
+x86 = "0.25.0"
+
 [dependencies.lazy_static]
 version = "^1.4.0"
 features = ["spin_no_std"]

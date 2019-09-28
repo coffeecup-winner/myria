@@ -13,7 +13,6 @@ mod vga;
 
 mod gdt;
 mod idt;
-mod io;
 mod pic;
 
 #[panic_handler]
@@ -23,7 +22,11 @@ fn panic(info: &PanicInfo) -> ! {
         vga::_print(*message);
         println!();
     }
-    loop { }
+    loop {
+        unsafe {
+            x86::halt();
+        }
+    }
 }
 
 #[no_mangle]
