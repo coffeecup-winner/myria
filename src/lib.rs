@@ -13,6 +13,7 @@ mod vga;
 
 mod gdt;
 mod idt;
+mod isrs;
 mod pic;
 
 #[panic_handler]
