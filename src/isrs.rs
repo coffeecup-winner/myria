@@ -57,13 +57,15 @@ pub unsafe extern "C" fn exception_handler(frame: &ExceptionFrame) {
 
 #[no_mangle]
 pub unsafe extern "C" fn irq0_handler() {
-    println!("[IRQ] Got IRQ0");
+    // Timer
     io::outb(pic::PIC0_CMD, pic::PIC_CMD_EOI);
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn irq1_handler() {
-    println!("[IRQ] Got IRQ1");
+    // Keyboard
+    let scancode = io::inb(0x60);
+    println!("[IRQ] Got keyboard event, scancode 0x{:x}", scancode);
     io::outb(pic::PIC0_CMD, pic::PIC_CMD_EOI);
 }
 
